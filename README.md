@@ -1,9 +1,28 @@
-# SPARQL with hobbits :woman_farmer: :farmer: :tomato: :mage_man:	 	
+# SPARQL with hobbits :woman_farmer::farmer::tomato:	
+This repository aims to equip users with enough TARQL and SPARQL knowledge so they can avoid being coerced into taking an unexpected (data) journey.    	
 
 # Project setup  
 This project requires access to:  
-+ A [Stardog cloud](https://www.stardog.com/stardog-cloud/) free tier account.
-+ The Visual Studio [`stardog-rdf-grammars`](https://marketplace.visualstudio.com/items?itemName=stardog-union.stardog-rdf-grammars) extension, which is also hosted on [GitHub](https://github.com/stardog-union/stardog-vsc/tree/master/stardog-rdf-grammars).   
++ [TARQL](https://github.com/tarql/tarql/releases), which is a command line tool for converting CSV files to RDF using SPARQL 1.1 syntax. A guide to installing TARQL for Windows environments is found [here](https://www.linkedin.com/pulse/using-tarql-convert-excel-spreadsheets-rdf-kurt-cagle/) and includes a recommendation to use the [`chocolatey`](https://community.chocolatey.org/) package manager for Windows users.   
+    + Install `chocolatey` as administrator following instructions on https://docs.chocolatey.org/en-us/choco/setup 
+    + Install `openjdk11` as administrator. This version is still used by most applications although long term service has moved to Java version 17.    
+    + Install `maven` as administrator.    
+    + Clone `tarql` package from Github and navigate to the tarql directory.    
+    + Assemble `tarql` maven package.  
+    + Add the path of the tarql bin file `.tarql/target/appassembler/bin/` to your environment's PATH variable so your system can locate the tarql application and make `tarql` available as a direct command from the command line. Note that `setx` sets the variable in the local user environment.  
+    + Installation success can be tested by inputting `tarql --help` in the command line.  
+
+    ```
+    choco install openjdk11
+    choco install maven  
+    git clone http://github.com/tarql/tarql
+    cd tarql 
+    mvn package appassembler:assemble
+    setx PATH "C:\Windows\System32\tarql\target\appassembler\bin" 
+    ```
+
++ The Visual Studio [`Stardog RDF Grammars`](https://marketplace.visualstudio.com/items?itemName=stardog-union.stardog-rdf-grammars) extension, which is also hosted on [GitHub](https://github.com/stardog-union/stardog-vsc/tree/master/stardog-rdf-grammars).  
++ A [Stardog cloud](https://www.stardog.com/stardog-cloud/) free tier account, which allows access to a GUI interface for SPARQL queries.  
 
 # Scenario  
 ## Mapping Hobbiton's food supply chains    
@@ -19,9 +38,11 @@ The following datasets are collected in Hobbiton and stored in `./data/raw_data`
 
 
 # Exercises  
-1. Writing TARQL queries    
-2. Writing SPARQL queries  
+1. Generate a simple RDF with TARQL    
+2. Generate more complex RDFs with TARQL   
+3. Write a simple SPARQL query  
 
 
 # Acknowledgements 
-+ [Website](https://www.ranker.com/list/hobbit-names/book-keeper) containing list of Hobbit names
++ [Official website](https://tarql.github.io/) containing documentation and tutorials for using the `tarql` package.   
++ [Website](https://www.ranker.com/list/hobbit-names/book-keeper) containing list of Hobbit names. 

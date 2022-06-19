@@ -1,0 +1,15 @@
+PREFIX ex: <http://www.hobbiton.com/schema#>
+prefix xsd: <http://www.w3.org/2001/XMLSchema#>
+
+CONSTRUCT { 
+   ?uuid ex:product ?Product ;
+       ex:date ?d ;
+       ex:farmer ?Farmer ;
+       ex:count ?c . 
+}
+FROM <file:farming.csv>
+WHERE { 
+  BIND (UUID() AS ?uuid) 
+  BIND (xsd:date(?Date) AS ?d)
+  BIND (xsd:integer(?Count) AS ?c)
+}
