@@ -21,14 +21,16 @@ This project requires access to:
     setx PATH "C:\Windows\System32\tarql\target\appassembler\bin" 
     ```
 
-+ The Visual Studio [`Stardog RDF Grammars`](https://marketplace.visualstudio.com/items?itemName=stardog-union.stardog-rdf-grammars) extension, which is also hosted on [GitHub](https://github.com/stardog-union/stardog-vsc/tree/master/stardog-rdf-grammars).  
-+ A [Stardog cloud](https://www.stardog.com/stardog-cloud/) free tier account, which allows access to a GUI interface for SPARQL queries.  
++ The Visual Studio [`Stardog RDF Grammars`](https://marketplace.visualstudio.com/items?itemName=stardog-union.stardog-rdf-grammars) IDE support extension, which is also hosted on [GitHub](https://github.com/stardog-union/stardog-vsc/tree/master/stardog-rdf-grammars).  
++ A [Stardog cloud](https://www.stardog.com/stardog-cloud/) free tier account, which provides access to a GUI interface for running SPARQL queries.  
+
+Where possible, we will work in a code editor or directly in the command line. 
 
 # Scenario  
-## Mapping Hobbiton's food supply chains    
+## Mapping Hobbiton's food supply chain    
 Food is inarguably the most important resource in Hobbiton. Goods are arguably assigned to either the agriculture, retail trade, wholesale trade, food services, transport or recreation industry, depending on which hobbit economist is doing the arguing.  
 
-To map these complexities and resolve subject matter in-fighting, we can represent Hobbiton's food supply chains using a knowledge graph. 
+To incorporate these complexities and resolve subject matter in-fighting, we can represent Hobbiton food supply chains using a knowledge graph. 
 
 ## Datasets   
 The following datasets are collected in Hobbiton and stored in `./data/raw_data`:  
@@ -45,4 +47,6 @@ The following datasets are collected in Hobbiton and stored in `./data/raw_data`
 
 # Acknowledgements 
 + [Official website](https://tarql.github.io/) containing documentation and tutorials for using the `tarql` package.   
++ [YouTube series](https://www.youtube.com/watch?v=Q5DrZV5wWzo&list=PLoOmvuyo5UAeihlKcWpzVzB51rr014TwD) on semantic web technologies created by OpenHPI Tutorials. 
++ [Analysis of Australia's food supply chain](https://www.awe.gov.au/agriculture-land/farm-food-drought/food/publications/foodmap-a-comparative-analysis) conducted by the Department of Agriculture, Water and Energy (2012).  
 + [Website](https://www.ranker.com/list/hobbit-names/book-keeper) containing list of Hobbit names. 
