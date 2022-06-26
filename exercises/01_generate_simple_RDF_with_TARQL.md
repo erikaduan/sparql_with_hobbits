@@ -15,7 +15,7 @@ Since we are interested in constructing a food supply chain, we might be interes
 + We would like to link the farmer back to a farm or company and indicate whether this is a local or overseas product.   
 
 
-# 1.1 Create a simple Resource Description Framework (RDF)    
+## 1.1 Create a simple Resource Description Framework (RDF)    
 
 First of all, let's explore how we can transform CSV files into RDF files in preparation for SPAQRL querying. A RDF contains the following interesting properties:  
 
@@ -50,7 +50,7 @@ PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 ## Exercise 1.1  
 
 We can convert `farming.csv` into a simple RDF with:  
-1. `Product` and `Farmer` assigned IRIs.     
+1. `Product` values assigned an IRI.       
 2. `Count` converted into an integer type and `Date` converted into a date type.  
 
 The script execution sequence should be read in the order of `FROM <...> WHERE {...} CONSTRUCT {...}`.   
@@ -60,18 +60,17 @@ PREFIX ex: <http://www.hobbiton.com/schema>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 
 CONSTRUCT {
-  ?product_iri ex:product ?Product ;
-       ex:date ?Date ;
-       ex:farmer ?Farmer ;
-       ex:count ?count . 
-  ?farmer_iri . 
+  ?product_iri ex:product ?Product ; 
+  ex:farmer ?Farmer ;
+  ex:date ?date ;
+  ex:count ?count . 
 }
 FROM <file:farming.csv>
 WHERE { 
   BIND(REPLACE(STR(?Product),"[ ]","_") AS ?product)
   BIND (IRI(CONCAT('http://www.hobbiton.com/schema/product#', ?product)) AS ?product_iri) 
-  BIND (IRI(CONCAT('http://www.hobbiton.com/schema/people#', ?Farmer)) AS ?farmer_iri) 
   BIND (xsd:integer(?Count) AS ?count)
+  BIND (xsd:dateTime(?Date) AS ?date)
 } 
 ```
 
