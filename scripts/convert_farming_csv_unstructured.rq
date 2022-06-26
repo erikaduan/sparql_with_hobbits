@@ -12,5 +12,5 @@ WHERE {
   BIND(REPLACE(STR(?Product),"[ ]","_") AS ?product)
   BIND (IRI(CONCAT('http://www.hobbiton.com/schema/product#', ?product)) AS ?product_iri) 
   BIND (xsd:integer(?Count) AS ?count)
-  BIND (xsd:dateTime(?Date) AS ?date)
+  BIND (strdt(?Date, xsd:date) AS ?date)
 } 
