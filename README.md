@@ -45,7 +45,8 @@ The following datasets are collected in Hobbiton and stored in `./data/raw_data`
 3. Write a simple SPARQL query  
 
 
-# Acknowledgements 
+# Acknowledgements  
++ [Learning SPAQRL Version 2](http://www.learningsparql.com/) by Bob DuCharme.  
 + [Official website](https://tarql.github.io/) containing documentation and tutorials for using the `tarql` package.   
 + [YouTube series](https://www.youtube.com/watch?v=Q5DrZV5wWzo&list=PLoOmvuyo5UAeihlKcWpzVzB51rr014TwD) on semantic web technologies created by OpenHPI Tutorials. 
 + [Analysis of Australia's food supply chain](https://www.awe.gov.au/agriculture-land/farm-food-drought/food/publications/foodmap-a-comparative-analysis) conducted by the Department of Agriculture, Water and Energy (2012).  

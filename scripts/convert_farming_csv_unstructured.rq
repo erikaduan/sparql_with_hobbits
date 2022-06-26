@@ -1,15 +1,16 @@
-PREFIX ex: <http://www.hobbiton.com/schema#>
-prefix xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX ex: <http://www.hobbiton.com/schema>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 
-CONSTRUCT { 
-   ?uuid ex:product ?Product ;
-       ex:date ?d ;
-       ex:farmer ?Farmer ;
-       ex:count ?c . 
+CONSTRUCT {
+  ?product_iri ex:product ?Product ; 
+  ex:farmer ?Farmer ;
+  ex:date ?date ;
+  ex:count ?count . 
 }
 FROM <file:farming.csv>
 WHERE { 
-  BIND (UUID() AS ?uuid) 
-  BIND (xsd:date(?Date) AS ?d)
-  BIND (xsd:integer(?Count) AS ?c)
-}
+  BIND(REPLACE(STR(?Product),"[ ]","_") AS ?product)
+  BIND (IRI(CONCAT('http://www.hobbiton.com/schema/product#', ?product)) AS ?product_iri) 
+  BIND (xsd:integer(?Count) AS ?count)
+  BIND (xsd:dateTime(?Date) AS ?date)
+} 
