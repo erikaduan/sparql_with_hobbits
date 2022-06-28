@@ -7,7 +7,9 @@ CONSTRUCT {
   ex:date ?date ;
   ex:count ?count . 
 }
+
 FROM <file:farming.csv>
+
 WHERE { 
   BIND(REPLACE(STR(?Product),"[ ]","_") AS ?product)
   BIND (IRI(CONCAT('http://www.hobbiton.com/schema/product#', ?product)) AS ?product_iri) 
