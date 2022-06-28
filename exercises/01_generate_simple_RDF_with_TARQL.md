@@ -9,13 +9,16 @@ The dataset, however, does not contain a primary key for tracking different vege
 | 2021-09-04 | Bolger | pumpkin | 29 |
 | 2021-09-04 | Bolger | tomato | 62 |
 
+>**Note**
+> The csv file format currently needs to begin with an empty row in order for all columns to be parsed via TARQL.  
+
 Since we are interested in constructing a food supply chain, we might be interested in incoporating data relationships where:  
 
 + We focus on the product as a subject i.e. who was it produced by, when and where was it produced and in how many units.
 + We would like to link the farmer back to a farm or company and indicate whether this is a local or overseas product.   
 
 
-## 1.1 Create a simple Resource Description Framework (RDF)    
+# 1.1 Create a simple Resource Description Framework (RDF)    
 
 First of all, let's explore how we can transform CSV files into RDF files in preparation for SPAQRL querying. A RDF contains the following interesting properties:  
 
@@ -41,11 +44,12 @@ PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 ```
 
 **Subject-predicate-object triples**  
-![](../figures/rdf_properties.svg)
+![](https://github.com/erikaduan/sparql_with_hobbits/blob/main/figures/rdf_properties.svg)
 
 + RDFs are stored in the form of `?subject ?predicate ?object` triples, as represented above.  
 + Subjects and predicates must exist as IRIs. This is why column names, which are predicates, must always reference a PREFIX in TARQL.   
 + Objects can exist as an IRI, string or other data type i.e. date, integer, BigDecimal or boolean data type. TARQL treats all values as strings by default. To access special arithmetic, boolean or date operations, we cast strings using `BIND(xsd:type(column_name) AS ?new_name)`.    
+
 
 ## Exercise 1.1  
 
@@ -61,7 +65,7 @@ PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 
 CONSTRUCT {
   ?product_iri ex:product ?Product ; 
-  ex:farmer ?Farmer ;
+  ex:farmer ?Farmer;
   ex:date ?date ;
   ex:count ?count . 
 }
@@ -72,11 +76,13 @@ WHERE {
   BIND(REPLACE(STR(?Product),"[ ]","_") AS ?product)
   BIND (IRI(CONCAT('http://www.hobbiton.com/schema/product#', ?product)) AS ?product_iri) 
   BIND (xsd:integer(?Count) AS ?count)
-  BIND (strdt(?Date, xsd:date) AS ?date)
+  BIND (STRDT(?Date, xsd:date) AS ?date)
 } 
 ```
 
-To convert `farming.csv` into an RDF, we need to use the command line to navigate to `.\scripts` and run the TARQL script using the following code below. The use of `>` enables us to save the output rdf as `farming_unstructured.rdf` in `.\data\clean_data\`.  
+To convert `farming.csv` into an RDF, we need to use the command line to navigate to `.\scripts` and run the TARQL script using the following code below. The use of `>` enables us to save the output rdf as `farming_unstructured.rdf` in `.\data\clean_data\`.   
+
+The output TURTLE file can now be viewed as [`.\data\clean_data\farming_unstructured.rdf`](https://github.com/erikaduan/sparql_with_hobbits/blob/main/data/clean_data/farming_unstructured.rdf).  
 
 ```
 tarql --write-base convert_farming_csv_unstructured.rq ..\data\raw_data\farming.csv > ..\data\clean_data\farming_unstructured.rdf
@@ -85,7 +91,8 @@ tarql --write-base convert_farming_csv_unstructured.rq ..\data\raw_data\farming.
 >**Note**
 > The output option `--write-base` needs to be used to convert CSV files into Turtle RDFs i.e. the most commonly used RDF serialisation format.    
 
-## 1.2 Create a structured RDF data model  
+
+# 1.2 Create a structured RDF data model  
 
 
 # Resources 

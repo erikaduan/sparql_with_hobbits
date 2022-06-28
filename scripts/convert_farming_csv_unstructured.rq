@@ -3,7 +3,7 @@ PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 
 CONSTRUCT {
   ?product_iri ex:product ?Product ; 
-  ex:farmer ?Farmer ;
+  ex:farmer ?Farmer;
   ex:date ?date ;
   ex:count ?count . 
 }
@@ -14,5 +14,5 @@ WHERE {
   BIND(REPLACE(STR(?Product),"[ ]","_") AS ?product)
   BIND (IRI(CONCAT('http://www.hobbiton.com/schema/product#', ?product)) AS ?product_iri) 
   BIND (xsd:integer(?Count) AS ?count)
-  BIND (strdt(?Date, xsd:date) AS ?date)
+  BIND (STRDT(?Date, xsd:date) AS ?date)
 } 
