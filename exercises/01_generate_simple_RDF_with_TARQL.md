@@ -6,8 +6,8 @@ The dataset, however, does not contain a primary key for tracking different vege
 
 | Date | Farmer | Product | Count |
 | -----|--------|---------|-------|
-| 4/09/2021 | Bolger | pumpkin | 29 |
-| 4/09/2021	| Bolger | tomato | 62 |
+| 2021-09-04 | Bolger | pumpkin | 29 |
+| 2021-09-04 | Bolger | tomato | 62 |
 
 Since we are interested in constructing a food supply chain, we might be interested in incoporating data relationships where:  
 
@@ -65,12 +65,14 @@ CONSTRUCT {
   ex:date ?date ;
   ex:count ?count . 
 }
+
 FROM <file:farming.csv>
+
 WHERE { 
   BIND(REPLACE(STR(?Product),"[ ]","_") AS ?product)
   BIND (IRI(CONCAT('http://www.hobbiton.com/schema/product#', ?product)) AS ?product_iri) 
   BIND (xsd:integer(?Count) AS ?count)
-  BIND (xsd:dateTime(?Date) AS ?date)
+  BIND (strdt(?Date, xsd:date) AS ?date)
 } 
 ```
 

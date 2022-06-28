@@ -1,7 +1,8 @@
-﻿Date,Farmer,Product,Count,
-04/09/2021,Bolger,pumpkin,29
-04/09/2021,Bolger,tomato,62
-12/09/2021,Bolger,pumpkin,12
-12/09/2021,Bolger,potato,83
-25/09/2021,Berylla,spinach,31
-25/09/2021,Berylla,snow pea,61
+﻿Date,Farmer,Product,Count
+2021-09-04,Bolger,pumpkin,29
+2021-09-04,Bolger,tomato,62
+2021-09-12,Bolger,pumpkin,12
+2021-09-12,Bolger,potato,83
+2021-09-12,Berylla,lettuce,12
+2021-09-25,Berylla,spinach,31
+2021-09-25,Berylla,snow pea,61
