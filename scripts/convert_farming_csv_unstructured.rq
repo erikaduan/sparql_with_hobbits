@@ -2,17 +2,22 @@ PREFIX ex: <http://www.hobbiton.com/schema>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 
 CONSTRUCT {
-  ?product_iri ex:product ?Product ; 
-  ex:farmer ?Farmer;
-  ex:date ?date ;
-  ex:count ?count . 
+  # Generate IRI for produce and list associated columns
+  ?product_iri ex:product ?Product ;
+    ex:farmer ?farmer_iri ;
+    ex:date ?date ;
+    ex:count ?count .
+  
+  # Generate IRI for farmer
+  ?farmer_iri ex:farmer ?Farmer .
 }
 
 FROM <file:farming.csv>
 
-WHERE { 
+WHERE {
   BIND(REPLACE(STR(?Product),"[ ]","_") AS ?product)
-  BIND (IRI(CONCAT('http://www.hobbiton.com/schema/product#', ?product)) AS ?product_iri) 
-  BIND (xsd:integer(?Count) AS ?count)
-  BIND (STRDT(?Date, xsd:date) AS ?date)
-} 
+  BIND(IRI(CONCAT('http://www.hobbiton.com/schema/product#', ?product)) AS ?product_iri)
+  BIND(IRI(CONCAT('http://www.hobbiton.com/schema/farmer#', ?Farmer)) AS ?farmer_iri)
+  BIND(xsd:integer(?Count) AS ?count)
+  BIND(xsd:date(?Date) AS ?date)
+}
