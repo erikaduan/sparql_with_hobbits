@@ -10,20 +10,6 @@ CONSTRUCT {
     ex:producedBy ?farmer_iri ;
     ex:producedOn ?date ;
     ex:hasCount ?count .
-
-  # Duplicate information
-  # ex:isProduct a rdf:Property ;
-  #   rdfs:domain ?product_iri ;
-  #   rdfs:range ?product .
-
-  # Specify farmer_iri as a Class and specify subject-object relationships
-  ?farmer_iri rdf:type rdfs:Class ;
-    ex:isFarmer ?Farmer .
-
-  # Duplicate information  
-  # ex:isFarmer a rdf:Property ;
-  #   rdfs:domain ?farmer_iri ;
-  #   rdfs:range ?Farmer .
 }
 
 FROM <file:farming.csv>
@@ -31,7 +17,6 @@ FROM <file:farming.csv>
 WHERE {
   BIND(REPLACE(STR(?Product),"[ ]","_") AS ?product)
   BIND(IRI(CONCAT('http://www.hobbiton.com/schema/product#', ?product)) AS ?product_iri)
-  BIND(IRI(CONCAT('http://www.hobbiton.com/schema/farmer#', ?Farmer)) AS ?farmer_iri)
   BIND(xsd:integer(?Count) AS ?count)
   BIND(xsd:date(?Date) AS ?date)
 }

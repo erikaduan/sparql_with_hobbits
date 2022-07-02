@@ -51,28 +51,25 @@ PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 + Objects can exist as an IRI, string or other data type i.e. date, integer, BigDecimal or boolean data type. TARQL treats all values as strings by default. To access special arithmetic, boolean or date operations, we cast strings using `BIND(xsd:type(?column_name) AS ?new_name)` or `BIND(STRDT(?column_name, xsd:integer) AS ?new_name)`.  
 <br/>
 
-
 ## Exercise 1.1  
 
 We can convert `farming.csv` into a simple RDF with:  
-1. `Product` and `Farmers` as subjects and both assigned an IRI.    
+1. `Product` as subject and assigned an IRI.    
 2. `Count` converted into an integer type and `Date` converted into a date type.  
 
 The script execution sequence should be read in the order of `FROM <...> WHERE {...} CONSTRUCT {...}`.   
 
 ```
-PREFIX ex: <http://www.hobbiton.com/schema#>
+PREFIX ex: <http://www.hobbiton.com/schema>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 
 CONSTRUCT {
-  # Generate IRI for produce and list associated columns
+  # Generate IRI for produce and add associated columns
+  # The shorthand ; is used for triples which share the same subject 
   ?product_iri ex:product ?Product ;
     ex:farmer ?Farmer ;
     ex:date ?date ;
     ex:count ?count .
-  
-  # Generate IRI for farmer
-  ?farmer_iri ex:farmer ?Farmer .
 }
 
 FROM <file:farming.csv>
@@ -80,7 +77,6 @@ FROM <file:farming.csv>
 WHERE {
   BIND(REPLACE(STR(?Product),"[ ]","_") AS ?product)
   BIND(IRI(CONCAT('http://www.hobbiton.com/schema/product#', ?product)) AS ?product_iri)
-  BIND(IRI(CONCAT('http://www.hobbiton.com/schema/farmer#', ?Farmer)) AS ?farmer_iri)
   BIND(xsd:integer(?Count) AS ?count)
   BIND(xsd:date(?Date) AS ?date)
 }
@@ -101,50 +97,45 @@ The output TURTLE file can then be viewed as [`./data/clean_data/farming_unstruc
 
 # 1.2 Create a structured RDF data model
 
-Let's examine our TURTLE RDF [output](https://github.com/erikaduan/sparql_with_hobbits/blob/main/data/clean_data/farming_unstructured.rdf) from exercise 1.1. Our simple TARQL script has produced some undesirable RDF artefacts.  
+Let's examine our TURTLE RDF [output](https://github.com/erikaduan/sparql_with_hobbits/blob/main/data/clean_data/farming_unstructured.rdf) from exercise 1.1.   
 
 Take the following original rows from `./data/raw_data/farming.csv`.   
 | Date | Farmer | Product | Count |  
 | -----|--------|---------|-------|  
 | 2021-09-12 | Bolger | potato | 83 |  
 | 2021-09-20 | Bolger | potato | 65 |  
+| 2021-09-12 | Berylla | potato | 48 |
 
-The RDF corresponding to these two rows is captured below. Undesirable artefacts include:  
-+ Data duplication for `Farmer` IRI, as each value for `Farmer` is separately captured.  
-+ Potential data duplication for observations where `Farmer` and `Product` are the same, but a different `Date` and `Count` is observed.  
+The RDF corresponding to these three rows is captured below. Notice how multiple rows of data can be stored under the same subject IRI i.e. `product_iri`.   
 
 ```
-<http://www.hobbiton.com/schema/farmer#Bolger>
-        ex:farmer  "Bolger" .
-
 <http://www.hobbiton.com/schema/product#potato>
         ex:product  "potato" ;
         ex:farmer   "Bolger" ;
         ex:date     "2021-09-12"^^xsd:date ;
-        ex:count    83 .
-
-<http://www.hobbiton.com/schema/farmer#Bolger>
-        ex:farmer  "Bolger" .
-
-<http://www.hobbiton.com/schema/product#potato>
+        ex:count    83 ;
         ex:product  "potato" ;
         ex:farmer   "Bolger" ;
         ex:date     "2021-09-20"^^xsd:date ;
-        ex:count    65 .
-``` 
-These problems can be addressed if we explicitly specify relationships between different columns in a CSV.  
- 
-1. Assign columns as `rdf:type rdfs:Class` to designate a node category i.e. `potato` and `tomato` belong to the same `Product` class. Class hierarchies can also be created with `rdfs:subClassOf`.  
-2. Assign column relationships using `rdf:type rdf:Property` to denote a subject-object relationship i.e. `Count` is a property of the `Product` class. Properties are defined in terms of what subject i.e. `rdfs:domain` and object value i.e. `rdfs:range` they link together. 
-3. Optional: Store metadata for properties using `rdfs:label`.  
-<br/> 
+        ex:count    65 ;
+        ex:product  "potato" ;
+        ex:farmer   "Berylla" ;
+        ex:date     "2021-09-12"^^xsd:date ;
+        ex:count    48 .
+```
 
+Knowledge graphs make use of different universally defined ontologies to describe relationship types between different nodes. The RDF and RDFS ontologies are deliberately limited to defining class membership and object properties to support flexibility. Relational structure is built using more expressive ontologies, like [OWL2](https://www3.cs.stonybrook.edu/~pfodor/courses/CSE595/L05_Web_Ontology_Language_OWL2.pdf). We can use the OWL2 ontology to define precise relationships between our columns (subject and predicates) compared to our first simple RDF.   
+
+>**Note**
+> When creating knowledge graphs, there is a compromise between enabling computationally efficient reasoning support and being sufficiently expressive. 
+<br/>
 
 ## Exercise 1.2  
 
-We can convert `farming.csv` into a structured RDF with:  
-1. `Product` and `Farmers` defined as `rdfs:Class`.    
-2. `Count` and `Date` defined as properties of `Product`.    
+We can convert `farming.csv` into a more structured RDF with:   
+#TODO
+1. Assign columns as `rdf:type rdfs:Class` to designate a node category i.e. `potato` and `tomato` belong to the same `Product` class. Class hierarchies can also be created with `rdfs:subClassOf`.  
+2. Assign column relationships using `rdf:type rdf:Property` to denote a subject-object relationship i.e. `Count` is a property of the `Product` class. Properties are defined in terms of what subject i.e. `rdfs:domain` and object value i.e. `rdfs:range` they link together. 
 
 ```
 PREFIX ex: <http://www.hobbiton.com/schema>
@@ -159,20 +150,6 @@ CONSTRUCT {
     ex:producedBy ?farmer_iri ;
     ex:producedOn ?date ;
     ex:hasCount ?count .
-
-  # Duplicate information
-  # ex:isProduct a rdf:Property ;
-  #   rdfs:domain ?product_iri ;
-  #   rdfs:range ?product .
-
-  # Specify farmer_iri as a Class and specify subject-object relationships
-  ?farmer_iri rdf:type rdfs:Class ;
-    ex:isFarmer ?Farmer .
-
-  # Duplicate information  
-  # ex:isFarmer a rdf:Property ;
-  #   rdfs:domain ?farmer_iri ;
-  #   rdfs:range ?Farmer .
 }
 
 FROM <file:farming.csv>
@@ -180,7 +157,6 @@ FROM <file:farming.csv>
 WHERE {
   BIND(REPLACE(STR(?Product),"[ ]","_") AS ?product)
   BIND(IRI(CONCAT('http://www.hobbiton.com/schema/product#', ?product)) AS ?product_iri)
-  BIND(IRI(CONCAT('http://www.hobbiton.com/schema/farmer#', ?Farmer)) AS ?farmer_iri)
   BIND(xsd:integer(?Count) AS ?count)
   BIND(xsd:date(?Date) AS ?date)
 }
@@ -194,6 +170,9 @@ tarql --write-base convert_farming_csv_structured.rq ../data/raw_data/farming.cs
 
 The output TURTLE file can then be viewed as [`./data/clean_data/farming_structured.rdf`](https://github.com/erikaduan/sparql_with_hobbits/blob/main/data/clean_data/farming_structured.rdf).  
 <br/>
+
+
+## Exercise 1.3  
 
 
 # Resources 
