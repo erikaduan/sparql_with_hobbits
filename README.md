@@ -6,10 +6,10 @@ This repository aims to equip users with enough TARQL and SPARQL knowledge so th
 This project requires access to:  
 + [TARQL](https://github.com/tarql/tarql/releases), which is a command line tool for converting CSV files to RDF using SPARQL 1.1 syntax. A guide to installing TARQL for Windows is found [here](https://www.linkedin.com/pulse/using-tarql-convert-excel-spreadsheets-rdf-kurt-cagle/) and includes a recommendation to use the [`chocolatey`](https://community.chocolatey.org/) package manager for Windows users.   
     
-    + Install `chocolatey` using the command prompt as administrator, following instructions on https://docs.chocolatey.org/en-us/choco/setup. 
+    + Install `chocolatey` using the command prompt as administrator, following instructions on https://docs.chocolatey.org/en-us/choco/setup.  
     + Install `openjdk11` as administrator. This version is still used by most applications although long term service has moved to Java version 17.    
     + Install `maven` as administrator.    
-    + Clone `tarql` package from Github and navigate to the tarql directory as administrator.    
+    + Clone `tarql` package from Github and navigate to the tarql directory as administrator.   
     + Assemble `tarql` maven package as administrator.  
     + Add the path of the tarql bin file `.tarql/target/appassembler/bin/` to your environment's PATH variable as administrator, so your system can locate `tarql` and make it available through the command line. Note that `setx` sets the variable in the local user environment.  
     + Installation success can be tested by inputting `tarql --help` in the command line.  
@@ -39,8 +39,8 @@ This project requires access to:
     curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
     ```
     
-    + The `poetry` package can be used to manage both package dependency and Python project management. Navigating to your local `sparql_with_hobbits` and initialise `poetry` inside a pre-existing project using `poetry init`. Doing so creates a `pyproject.toml` file in your repository, which `poetry` uses to define your project metadata, dependencies and scripts. 
-    + Install `rdflib` to work with RDF files in Python using `poetry add rdflib`, which installs `rdflib`, adds it as a dependency to `pyproject.toml` and creates a `poetry.lock` file for your project.    
+    + The `poetry` package can be used to manage Python virtual environments and package dependencies. Navigate to your local `sparql_with_hobbits` and initialise `poetry` inside a pre-existing project using `poetry init`. Doing so creates a `pyproject.toml` file in your repository, which `poetry` uses to define your project metadata, dependencies and scripts.  
+    + Install `rdflib` to work with RDF files in Python using `poetry add rdflib`. This installs `rdflib` in your poetry-managed Python virtual environment and lists it as a dependency in `pyproject.toml` and a new `poetry.lock` file.    
 
     ```
     cd .../sparql_with_hobbits
@@ -60,7 +60,7 @@ Where possible, we will work in a code editor or directly in the command line to
 ## Mapping Hobbiton's food supply chain    
 Food is inarguably the most important resource in Hobbiton. Goods are arguably assigned to either the agriculture, retail trade, wholesale trade, food services, transport or recreation industry, depending on which hobbit economist is doing the arguing.  
 
-To incorporate these complexities and resolve subject matter in-fighting, we can represent Hobbiton food supply chains using a knowledge graph. 
+To incorporate these complexities and resolve subject matter in-fighting, we can represent Hobbiton food supply chains using a knowledge graph.  
 
 ## Datasets   
 The following datasets are collected in Hobbiton and stored in `./data/raw_data`:  
@@ -77,8 +77,8 @@ The following datasets are collected in Hobbiton and stored in `./data/raw_data`
 # Package versions  
 + Chocolatey v1.1.0
 + Python 3.9.6
-+ Poetry version 1.1.13 
-+ Access `[./poetry.lock]`() for Python package versions   
++ Poetry 1.1.13 
++ Access [`./poetry.lock`](https://github.com/erikaduan/sparql_with_hobbits/blob/main/poetry.lock) for Python package versions   
 
 
 # Acknowledgements  

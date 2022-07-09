@@ -2,14 +2,31 @@ PREFIX ex: <http://www.hobbiton.com/schema>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX rdfs: <https://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#> 
 
 CONSTRUCT {
-  # Specify product_iri as a Class and specify subject-object relationships
-  ?product_iri rdf:type rdfs:Class ;
-    ex:isProduct ?Product ;
-    ex:producedBy ?farmer_iri ;
+  # Specify product_iri, product and farmer as classes
+  # Specify product_iri and product class equivalence 
+  ?product_iri rdf:type owl:Class ;
+    ex:producedBy ?Farmer ;
     ex:producedOn ?date ;
     ex:hasCount ?count .
+  
+  ?Product rdf:type owl:Class ;
+    owl:equivalentClass ?product_iri .  
+
+  ?Farmer rdf:type owl:Class . 
+
+  ex:producedBy rdf:type owl:ObjectProperty ; 
+    rdf:type owl:TransitiveProperty ; 
+    owl:inverseOf ex:produces ; 
+    rdf:type owl:FunctionalProperty . 
+  
+  ex:producedOn rdf:type owl:ObjectProperty ; 
+    rdf:type owl:FunctionalProperty . 
+
+  ex:hasCount rdf:type owl:ObjectProperty ; 
+    rdf:type owl:FunctionalProperty . 
 }
 
 FROM <file:farming.csv>

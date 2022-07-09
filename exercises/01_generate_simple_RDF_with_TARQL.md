@@ -1,16 +1,16 @@
 # 1 Write a simple TARQL query :tomato:  
 
-Let's start with [`./data/raw_data/farming.csv`](https://github.com/erikaduan/sparql_with_hobbits/blob/main/data/raw_data/farming.csv). This dataset contains column names in the first row and has a relatively structured format (values in each column are atomic and of the same type with no missing values).  
+Let's start with [`./data/raw_data/farming.csv`](https://github.com/erikaduan/sparql_with_hobbits/blob/main/data/raw_data/farming.csv). This dataset contains column names in the first row and has a relatively structured format (values in each column are atomic and of the same type with no missing values).
 
-The dataset, however, does not contain a primary key for tracking different vegetable product counts. A primary key for `Date-Farmer` and foreign key for `Farmer` would need to be created to link this table to other tables within a relational database.  
+The dataset, however, does not contain a primary key for tracking individual product harvests. A primary key for `Date-Farmer` and foreign key for `Farmer` would need to be created to link this table to other tables within a relational database.
 
 | Date | Farmer | Product | Count |  
 | -----|--------|---------|-------|  
-| 2021-09-04 | Bolger | pumpkin | 29 |  
-| 2021-09-04 | Bolger | tomato | 62 |  
+| 2021-09-04 | Bolger | pumpkin | 29 | 
+| 2021-09-04 | Bolger | tomato | 62 |
 
 >**Note**
-> The csv file format currently needs to begin with an empty row in order for all columns to be parsed via TARQL.  
+> The csv file format currently needs to begin with an empty row in order for all columns to be parsed via TARQL.
 
 Since we are interested in constructing a food supply chain, we might be interested in incoporating data relationships where:  
 + We focus on produce as a subject i.e. who was it produced by, when and where was it produced and in how many units.
@@ -53,7 +53,7 @@ PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 
 ## Exercise 1.1  
 
-We can convert `farming.csv` into a simple RDF with:  
+We can convert `./data/raw_data/farming.csv` into a simple RDF with:  
 1. `Product` as subject and assigned an IRI.    
 2. `Count` converted into an integer type and `Date` converted into a date type.  
 
@@ -102,54 +102,92 @@ Let's examine our TURTLE RDF [output](https://github.com/erikaduan/sparql_with_h
 Take the following original rows from `./data/raw_data/farming.csv`.   
 | Date | Farmer | Product | Count |  
 | -----|--------|---------|-------|  
-| 2021-09-12 | Bolger | potato | 83 |  
-| 2021-09-20 | Bolger | potato | 65 |  
-| 2021-09-12 | Berylla | potato | 48 |
+| 2021-09-12 | Fredegar Bolger | potato | 83 |  
+| 2021-09-20 | Fredegar Bolger | potato | 65 |  
+| 2021-09-12 | Berylla Baggins | potato | 48 |
 
-The RDF corresponding to these three rows is captured below. Notice how multiple rows of data can be stored under the same subject IRI i.e. `product_iri`.   
+The RDF corresponding to these three rows is captured below. Notice how multiple rows of data can be stored under the same subject IRI i.e. `product_iri`. #TODO ask what happens when there is no unique key in the csv to convert.  
 
 ```
 <http://www.hobbiton.com/schema/product#potato>
         ex:product  "potato" ;
-        ex:farmer   "Bolger" ;
+        ex:farmer   "Fredegar Bolger" ;
         ex:date     "2021-09-12"^^xsd:date ;
         ex:count    83 ;
         ex:product  "potato" ;
-        ex:farmer   "Bolger" ;
+        ex:farmer   "Fredegar Bolger" ;
         ex:date     "2021-09-20"^^xsd:date ;
         ex:count    65 ;
         ex:product  "potato" ;
-        ex:farmer   "Berylla" ;
+        ex:farmer   "Berylla Baggins" ;
         ex:date     "2021-09-12"^^xsd:date ;
         ex:count    48 .
 ```
 
-Knowledge graphs make use of different universally defined ontologies to describe relationship types between different nodes. The RDF and RDFS ontologies are deliberately limited to defining class membership and object properties to support flexibility. Relational structure is built using more expressive ontologies, like [OWL2](https://www3.cs.stonybrook.edu/~pfodor/courses/CSE595/L05_Web_Ontology_Language_OWL2.pdf). We can use the OWL2 ontology to define precise relationships between our columns (subject and predicates) compared to our first simple RDF.   
+Knowledge graphs make use of different universally defined ontologies to describe relationship types between different nodes. The RDF and RDFS ontologies are deliberately limited to defining class membership and object properties to support flexibility. Relational structure is built using more expressive ontologies, like [OWL2](https://www3.cs.stonybrook.edu/~pfodor/courses/CSE595/L05_Web_Ontology_Language_OWL2.pdf).
+
+The OWL2 ontology applies to classes, properties and instances of classes (individuals). We can use the OWL2 ontology to define more precise relationships between our columns (subjects or classes and predicates or properties) in `./data/raw_data/farming.csv`.  
 
 >**Note**
-> When creating knowledge graphs, there is a compromise between enabling computationally efficient reasoning support and being sufficiently expressive. 
+> When creating knowledge graphs, there is a compromise between enabling computationally efficient reasoning support and being sufficiently expressive.
 <br/>
+
+**OWL2 class axioms**  
++ Subjects must be assigned as `rdf:type owl:Class` to use OWL2 class axioms.  
++ `owl:Thing` is the most general class i.e. every OWL individual is a member of this class and every object of `owl:Class` is a subclass of `owl:Thing`. 
++ `LuxuryApartment rdf:type owl:Class ; rdfs:subClassOf :Apartment`. A subclass relation is defined using RDFS.  
++ `Apartment rdf:type owl:Class ; owl:equivalentClass dbpedia:Apartment`. An equivalence between two class defines that every instance of a specified class is also an instance of its equivalent class. Equivalence is useful for mapping subjects from different ontologies to each other.  
++ `LuxuryApartment rdf:type owl:Class ; owl:disjointWith RunDownApartment`. A disjoint between two classes defines the logic that instances of class `LuxuryApartment` cannot also belong to class `RunDownApartment`. 
++ `UnFurnishedApartment rdfs:subClassOf Apartment; owl:complementOf FurnishedApartment`. The complement of class `UnFurnishedApartment` comprises all instances which do not belong to this class. The union of a class and its complement is therefore `owl:Thing`. This means that we also imply that `Apartment rdf:type owl:Class` and `owl:Thing` are equivalent, which may not be our original intention.  
++ `Apartment rdf:type owl:Class ; owl:unionOf ( LuxuryApartment RunDownApartment )`. The union of a class defines the logic that `Apartment` is equivalent to two or more separate classes i.e. `LuxuryApartment` and `RunDownApartment`. An extension of `owl:unionOf` is `owl:disjointUnionOf`, which defines the logic that two classes are subclasses of `Apartment` and disjoint with respect to each other.  
++ `LuxuryApartment rdf:type owl:Class ; owl:intersectionOf ( GoodLocationApartment LargeApartment )`. The intersection defines the logic that every instance of class `LuxuryApartment` is the instance of the intersection of classes `GoodLocationApartment` and `LargeApartment`.   
+
+**OWL2 property axioms** 
++ Predicates must be assigned as `rdf:type owl:ObjectProperty` to use OWL2 property axioms. 
++ `isPartOf rdf:type owl:ObjectProperty ; rdf:type owl:TransitiveProperty`. A transitive property defines the logic that if `apartment_a isPartof complex_a` and `bathroom_a isPartof apartment_a`, then `bathroom_a isPartof complex_a`.  
++ `isAdjacentTo rdf:type owl:ObjectProperty ; rdf:type owl:SymmetricProperty`. A symmetric property defines the logic that if `a isAdjacentTo b`, then `b isAdjacentTo a`. An extension of this logic is that `owl:AsymmetricProperty` also exists, i.e. `isCheaperThan rdf:type owl:ObjectProperty ; rdf:type owl:AsymmetricProperty ; rdf:type owl:TransitiveProperty .`  
++ `isRentedBy rdf:type owl:ObjectProperty ; owl:inverseOf rents`. An inverse property defines the logic that if `apartment_a isRentedBy person_b`, then `person_b rents apartment_a`. More importantly, domain and range are inherited from the inverse property i.e. `IsRentedby` has `rdfs:domain ?Apartment` and `rdfs:range ?Person`. In OWL2, only object properties have an inverse.   
++ `isPartOf rdf:type owl:ObjectProperty ; owl:equivalentProperty dbpedia:partOf`. An equivalence between two properties defines the logic that if `a isPartOf c`, then `a partOf c` always is true. Equivalence is useful for mapping objects from different ontologies to each other.   
++ `rents rdf:type owl:ObjectProperty ; owl:disjointProperty owns`. A disjoint between two properties defines the logic that if `person_a rents apartment_a`, `person_a owns apartment_a` cannot also be true.  
++ `hasNumberOfRooms rdf:type owl:DatatypeProperty ; rdf:type owl:FunctionalProperty`. A functional property defines the logic that `hasNumberOfRooms` can only have one value at most associated with it.  
 
 ## Exercise 1.2  
 
-We can convert `farming.csv` into a more structured RDF with:   
-#TODO
-1. Assign columns as `rdf:type rdfs:Class` to designate a node category i.e. `potato` and `tomato` belong to the same `Product` class. Class hierarchies can also be created with `rdfs:subClassOf`.  
-2. Assign column relationships using `rdf:type rdf:Property` to denote a subject-object relationship i.e. `Count` is a property of the `Product` class. Properties are defined in terms of what subject i.e. `rdfs:domain` and object value i.e. `rdfs:range` they link together. 
+We can convert `farming.csv` into a more structured RDF:   
+1. Assign `product_iri`, `product` and `farmer` as classes.  
+2. Rename `date` and `count` as the properties `producedOn` and `hasCount` and create a new `producedBy` property which links `product` to `farmer`.  
+3. Introduce extra class and property logic using the OWL2 ontology i.e. `hasCount rdf:type owl:FunctionalProperty` to define that `hasCount` can always only have one value.  
 
 ```
 PREFIX ex: <http://www.hobbiton.com/schema>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX rdfs: <https://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#> 
 
 CONSTRUCT {
-  # Specify product_iri as a Class and specify subject-object relationships
-  ?product_iri rdf:type rdfs:Class ;
-    ex:isProduct ?Product ;
-    ex:producedBy ?farmer_iri ;
+  # Specify product_iri, product and farmer as classes
+  # Specify product_iri and product class equivalence 
+  ?product_iri rdf:type owl:Class ;
+    ex:producedBy ?Farmer ;
     ex:producedOn ?date ;
     ex:hasCount ?count .
+  
+  ?Product rdf:type owl:Class ;
+    owl:equivalentClass ?product_iri .  
+
+  ?Farmer rdf:type owl:Class . 
+
+  ex:producedBy rdf:type owl:ObjectProperty ; 
+    rdf:type owl:TransitiveProperty ; 
+    owl:inverseOf ex:produces ; 
+    rdf:type owl:FunctionalProperty . 
+  
+  ex:producedOn rdf:type owl:ObjectProperty ; 
+    rdf:type owl:FunctionalProperty . 
+
+  ex:hasCount rdf:type owl:ObjectProperty ; 
+    rdf:type owl:FunctionalProperty . 
 }
 
 FROM <file:farming.csv>
@@ -162,7 +200,7 @@ WHERE {
 }
 ```
 
-To convert `farming.csv` into an RDF, we need to use the command line to navigate to `./scripts` and run the TARQL script using the following code below.   
+Use the command line to navigate to `./scripts` and run the TARQL script using the following code below.   
 
 ```
 tarql --write-base convert_farming_csv_structured.rq ../data/raw_data/farming.csv > ../data/clean_data/farming_structured.rdf
@@ -172,8 +210,11 @@ The output TURTLE file can then be viewed as [`./data/clean_data/farming_structu
 <br/>
 
 
-## Exercise 1.3  
+# Link multiple datasets to create a structured RDF  
+<br/>
 
+## Exercise 1.3  
+<br/>
 
 # Resources 
 + Chapter 2 of [Learning SPAQRL Version 2](http://www.learningsparql.com/) by Bob DuCharme.  
