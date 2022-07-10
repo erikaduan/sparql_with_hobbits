@@ -23,7 +23,7 @@ This project requires access to:
     setx PATH "C:\Windows\System32\tarql\target\appassembler\bin" 
     ```
 
-+ A Python virtual environment, ideally managed using `venv` (for managing Python virtual environments) and `poetry` (for managing Python project package repositories). A guide to setting up virtual Python environments for Windows can be found [here](https://realpython.com/python-virtual-environments-a-primer/#how-can-you-work-with-a-python-virtual-environment).   
++ Python packages. Python virtual environments and package dependecies can now both be managed using [`poetry`](https://realpython.com/dependency-management-python-poetry/). A guide to setting up virtual Python environments using other packages like `venv` can also be found [here](https://realpython.com/python-virtual-environments-a-primer/#how-can-you-work-with-a-python-virtual-environment).    
     
     + Install `pyenv` as administrator for simple Python version management. For Windows, install [`pyenv-win`](https://github.com/pyenv-win/pyenv-win) using `choco install pyenv-win`.   
     + Use `pyenv` to install Python 3.9 by checking which Python versions are available using `pyenv install --list` and then installing a library i.e. using `pyenv install 3.9.6`. Set your global python version i.e. using `pyenv global 3.9.6`.   
